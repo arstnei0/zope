@@ -1,11 +1,16 @@
 pub mod bracket;
 pub mod keyword;
+pub mod number;
+pub mod operator;
 pub mod punctuation;
 pub mod separator;
 pub mod space;
+pub mod utils;
 
 use self::bracket::*;
 use self::keyword::*;
+use self::number::*;
+use self::operator::*;
 use self::punctuation::*;
 use self::separator::*;
 use self::space::*;
@@ -17,8 +22,10 @@ pub enum TokenT {
     Punctuation(Punctuation),
     Keyword(Keyword),
     Ident(String),
+    Operator(Operator),
     Separator(Separator),
     Separated(String),
+    NumberChar(NumberChar),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -56,6 +63,8 @@ pub fn tokenize(code: String) -> TokenStream {
         let space_res = Space::parse(char);
         let punctuation_res = Punctuation::parse(char);
         let separator_res = Separator::parse(char);
+        let operator_res = Operator::parse(char);
+        let number_res = NumberChar::parse(char);
         let is_ident = {
             if let Some(_) = bracket_res {
                 false
@@ -64,6 +73,10 @@ pub fn tokenize(code: String) -> TokenStream {
             } else if let Some(_) = punctuation_res {
                 false
             } else if let Some(_) = separator_res {
+                false
+            } else if let Some(_) = operator_res {
+                false
+            } else if let Some(_) = number_res {
                 false
             } else {
                 true
@@ -139,6 +152,16 @@ pub fn tokenize(code: String) -> TokenStream {
             token_stream.push(Token {
                 pos: this_pos,
                 t: TokenT::Space(space),
+            });
+        } else if let Some(operator) = operator_res {
+            token_stream.push(Token {
+                pos: this_pos,
+                t: TokenT::Operator(operator),
+            });
+        } else if let Some(number_char) = number_res {
+            token_stream.push(Token {
+                pos: this_pos,
+                t: TokenT::NumberChar(number_char),
             });
         } else if let Some(punctuation) = punctuation_res {
             token_stream.push(Token {
@@ -216,11 +239,37 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_operator() {
+        let res = tokenize("=/".to_string());
+        assert_eq!(
+            res.get(0).unwrap().clone().t,
+            TokenT::Operator(Operator::Equal),
+        );
+        assert_eq!(
+            res.get(1).unwrap().clone().t,
+            TokenT::Operator(Operator::Slash),
+        );
+    }
+
+    #[test]
     fn tokenize_ident() {
         let res = tokenize("hello_world".to_string());
         assert_eq!(
             res.get(0).unwrap().clone().t,
             TokenT::Ident("hello_world".into()),
+        );
+    }
+
+    #[test]
+    fn tokenize_number_char() {
+        let res = tokenize("12".to_string());
+        assert_eq!(
+            res.get(0).unwrap().clone().t,
+            TokenT::NumberChar(NumberChar::One)
+        );
+        assert_eq!(
+            res.get(1).unwrap().clone().t,
+            TokenT::NumberChar(NumberChar::Two)
         );
     }
 
