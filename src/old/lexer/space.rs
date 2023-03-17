@@ -6,12 +6,12 @@ pub enum Space {
 }
 
 impl Space {
-    pub fn parse(char: char) -> Option<Space> {
-        if char == ' ' {
+    pub fn parse(char: &char) -> Option<Space> {
+        if *char == ' ' {
             Some(Space::Space)
-        } else if char == '\n' {
+        } else if *char == '\n' {
             Some(Space::NewLine)
-        } else if char == '\t' {
+        } else if *char == '\t' {
             Some(Space::Tab)
         } else {
             None
@@ -25,8 +25,8 @@ mod tests {
 
     #[test]
     fn parse_space() {
-        assert_eq!(Space::parse(' '), Some(Space::Space));
-        assert_eq!(Space::parse('\n'), Some(Space::NewLine));
-        assert_eq!(Space::parse('\t'), Some(Space::Tab));
+        assert_eq!(Space$1, Some(Space::Space));
+        assert_eq!(Space::parse(&'\n'), Some(Space::NewLine));
+        assert_eq!(Space::parse(&'\t'), Some(Space::Tab));
     }
 }

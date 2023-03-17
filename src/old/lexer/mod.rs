@@ -200,14 +200,14 @@ mod tests {
             res.get(0).unwrap().clone(),
             Token {
                 pos: TokenPos { start: 0, end: 0 },
-                t: TokenT::Bracket(Bracket::parse('(').unwrap())
+                t: TokenT::Bracket(Bracket::parse(&'(').unwrap())
             }
         );
         assert_eq!(
             res.get(1).unwrap().clone(),
             Token {
                 pos: TokenPos { start: 1, end: 1 },
-                t: TokenT::Bracket(Bracket::parse(')').unwrap())
+                t: TokenT::Bracket(Bracket::parse(&')').unwrap())
             }
         );
     }
@@ -217,15 +217,15 @@ mod tests {
         let res = tokenize(" \n\t".to_string());
         assert_eq!(
             res.get(0).unwrap().clone().t,
-            TokenT::Space(Space::parse(' ').unwrap())
+            TokenT::Space(Space::parse(&' ').unwrap())
         );
         assert_eq!(
             res.get(1).unwrap().clone().t,
-            TokenT::Space(Space::parse('\n').unwrap())
+            TokenT::Space(Space::parse(&'\n').unwrap())
         );
         assert_eq!(
             res.get(2).unwrap().clone().t,
-            TokenT::Space(Space::parse('\t').unwrap())
+            TokenT::Space(Space::parse(&'\t').unwrap())
         );
     }
 

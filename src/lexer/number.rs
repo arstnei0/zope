@@ -13,26 +13,26 @@ pub enum NumberChar {
 }
 
 impl NumberChar {
-    pub fn parse(char: char) -> Option<NumberChar> {
-        if char == '1' {
+    pub fn parse(char: &char) -> Option<NumberChar> {
+        if *char == '1' {
             Some(NumberChar::One)
-        } else if char == '2' {
+        } else if *char == '2' {
             Some(NumberChar::Two)
-        } else if char == '3' {
+        } else if *char == '3' {
             Some(NumberChar::Three)
-        } else if char == '4' {
+        } else if *char == '4' {
             Some(NumberChar::Four)
-        } else if char == '5' {
+        } else if *char == '5' {
             Some(NumberChar::Five)
-        } else if char == '6' {
+        } else if *char == '6' {
             Some(NumberChar::Six)
-        } else if char == '7' {
+        } else if *char == '7' {
             Some(NumberChar::Seven)
-        } else if char == '8' {
+        } else if *char == '8' {
             Some(NumberChar::Eight)
-        } else if char == '9' {
+        } else if *char == '9' {
             Some(NumberChar::Nine)
-        } else if char == '0' {
+        } else if *char == '0' {
             Some(NumberChar::Zero)
         } else {
             None
@@ -45,8 +45,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_keyword() {
-        assert_eq!(NumberChar::parse('1'), Some(NumberChar::One));
-        assert_eq!(NumberChar::parse(' '), None);
+    fn parse_number_char() {
+        assert_eq!(NumberChar::parse(&'1'), Some(NumberChar::One));
+        assert_eq!(NumberChar::parse(&' '), None);
     }
 }
