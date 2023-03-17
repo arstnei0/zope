@@ -6,3 +6,7 @@ pub struct Stmt {
     pub kind: StmtKind,
     pub tokens: Vec<Token>,
 }
+
+pub struct StmtParser {
+    // cursor:
+}

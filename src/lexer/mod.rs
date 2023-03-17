@@ -12,7 +12,9 @@ use std::str::Chars;
 
 use cursor::*;
 
-use self::{bracket::*, keyword::*, number::*, operator::*, position::*, punctuation::*, space::*};
+pub use self::{
+    bracket::*, keyword::*, number::*, operator::*, position::*, punctuation::*, space::*,
+};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TokenKind {
@@ -84,16 +86,22 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn bump_next(&mut self) -> Option<Token> {
+    pub fn bump(&mut self) -> Option<Token> {
         Self::parse(&mut self.cursor)
     }
 
-    pub fn ignore_next(&mut self) {
+    pub fn ignore(&mut self) {
         self.cursor.bump();
     }
 
-    pub fn peek_next(&mut self) -> Option<Token> {
-        Self::parse(&mut self.cursor.clone())
+    pub fn ignore_n(&mut self, n: usize) {
+        for _ in 0..n {
+            self.ignore();
+        }
+    }
+
+    pub fn sync(&mut self, another: Self) {
+        self.cursor = another.cursor;
     }
 
     pub fn parse_char(char: &char) -> Option<TokenKind> {
