@@ -1,5 +1,6 @@
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum Literal {
+pub enum LiteralExpr {
     Number(u32),
     Bool(bool),
+    String(String),
 }

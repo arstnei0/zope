@@ -1,10 +1,10 @@
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Identifier {
+pub struct IdentifierExpr {
     pub ident: String,
 }
 
-impl Identifier {
-    pub fn new(ident: String) -> Identifier {
-        Identifier { ident }
+impl IdentifierExpr {
+    pub fn new(ident: String) -> IdentifierExpr {
+        IdentifierExpr { ident }
     }
 }

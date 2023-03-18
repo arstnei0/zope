@@ -5,6 +5,7 @@ pub mod number;
 pub mod operator;
 pub mod position;
 pub mod punctuation;
+pub mod separation;
 pub mod space;
 #[cfg(test)]
 mod tests;
@@ -13,7 +14,8 @@ use std::str::Chars;
 use cursor::*;
 
 pub use self::{
-    bracket::*, keyword::*, number::*, operator::*, position::*, punctuation::*, space::*,
+    bracket::*, keyword::*, number::*, operator::*, position::*, punctuation::*, separation::*,
+    space::*,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -25,12 +27,19 @@ pub enum TokenKind {
     Identifier(String),
     Operator(Operator),
     NumberChar(NumberChar),
+    Separation(Separation),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Token {
     pub kind: TokenKind,
     pub pos: Position,
+}
+
+impl Token {
+    pub fn new(kind: TokenKind, pos: Position) -> Self {
+        Self { kind, pos }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -54,6 +63,24 @@ impl<'a> Lexer<'a> {
 
         if let Some(kind) = Self::parse_char(char) {
             Some(Token { pos, kind })
+        } else if let Some(separator) = Separator::parse(char) {
+            let mut string = String::new();
+            let mut end = pos.end;
+            loop {
+                end += 1;
+                let new_char = &cursor.bump()?;
+                if let Some(current_separator) = Separator::parse(new_char) {
+                    if separator == current_separator {
+                        break;
+                    }
+                }
+                string.push(*new_char);
+            }
+
+            Some(Token::new(
+                TokenKind::Separation(Separation::new(separator, string)),
+                Position::new(pos.start, end),
+            ))
         } else {
             let mut identifier = String::new();
             let mut curr_char = *char;
@@ -87,7 +114,41 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn bump(&mut self) -> Option<Token> {
-        Self::parse(&mut self.cursor)
+        let bumped = Self::parse(&mut self.cursor);
+        bumped
+    }
+
+    pub fn ignore_some(&mut self, matcher: fn(&TokenKind) -> bool) -> Option<Token> {
+        let mut new_cursor = self.cursor.clone();
+        let mut last = None;
+        loop {
+            if let Some(token) = Self::parse(&mut new_cursor) {
+                if matcher(&token.kind) {
+                    last = Some(token);
+                    self.cursor = new_cursor.clone();
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        last
+    }
+
+    pub fn ignore_spaces(&mut self) -> Option<Token> {
+        self.ignore_some(|kind| match kind {
+            TokenKind::Space(_) => true,
+            _ => false,
+        })
+    }
+
+    pub fn ignore_semicolon(&mut self) -> Option<Token> {
+        self.ignore_some(|kind| match kind {
+            TokenKind::Punctuation(Punctuation::Semicolon) => true,
+            _ => false,
+        })
     }
 
     pub fn ignore(&mut self) {

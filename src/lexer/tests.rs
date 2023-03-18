@@ -1,7 +1,7 @@
 use crate::lexer::{bracket::Bracket, position::Position, *};
 
 #[test]
-pub fn parse_bracket() {
+fn parse_bracket() {
     let test_str = "({[<>]}))";
     let mut lexer = Lexer::new(test_str.chars());
     let token = lexer.bump().unwrap();
@@ -17,7 +17,7 @@ pub fn parse_bracket() {
 }
 
 #[test]
-pub fn lex_keyword() {
+fn parse_keyword() {
     let test_str = "let if";
     let mut lexer = Lexer::new(test_str.chars());
     let token = lexer.bump().unwrap();
@@ -43,4 +43,23 @@ pub fn lex_keyword() {
     );
     let char = token.pos.get(test_str);
     assert_eq!(char, Some("if".to_string()));
+}
+
+#[test]
+fn parse_separation() {
+    let test_str = "'hello world'";
+    let mut lexer = Lexer::new(test_str.chars());
+    let token = lexer.bump().unwrap();
+    assert_eq!(
+        token,
+        Token {
+            pos: Position { start: 0, end: 12 },
+            kind: TokenKind::Separation(Separation::new(
+                Separator::SingleQuote,
+                "hello world".to_string()
+            ))
+        }
+    );
+    let char = token.pos.get(test_str);
+    assert_eq!(char, Some("'hello world'".to_string()));
 }

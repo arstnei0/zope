@@ -4,6 +4,8 @@ pub enum Keyword {
     Fn,
     State,
     If,
+    True,
+    False,
 }
 
 impl Keyword {
@@ -13,6 +15,8 @@ impl Keyword {
             "fn" => Some(Keyword::Fn),
             "if" => Some(Keyword::If),
             "state" => Some(Keyword::State),
+            "true" => Some(Keyword::True),
+            "false" => Some(Keyword::False),
             _ => None,
         }
     }

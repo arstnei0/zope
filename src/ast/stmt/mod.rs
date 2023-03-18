@@ -1,12 +1,32 @@
+use crate::ast::expr::*;
 use crate::lexer::*;
 
-pub enum StmtKind {}
-
-pub struct Stmt {
-    pub kind: StmtKind,
-    pub tokens: Vec<Token>,
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LetStmt {
+    pub identifier: String,
+    pub value: Expr,
 }
 
-pub struct StmtParser {
-    // cursor:
+impl LetStmt {
+    pub fn new(identifier: String, value: Expr) -> LetStmt {
+        Self { identifier, value }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StmtKind {
+    Expr(Expr),
+    Let(LetStmt),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Stmt {
+    pub kind: StmtKind,
+    pub pos: Position,
+}
+
+impl Stmt {
+    pub fn new(kind: StmtKind, pos: Position) -> Stmt {
+        Self { kind, pos }
+    }
 }

@@ -38,6 +38,21 @@ impl NumberChar {
             None
         }
     }
+
+    pub fn int(&self) -> usize {
+        match self {
+            NumberChar::One => 1,
+            NumberChar::Two => 2,
+            NumberChar::Three => 3,
+            NumberChar::Four => 4,
+            NumberChar::Five => 5,
+            NumberChar::Six => 6,
+            NumberChar::Seven => 7,
+            NumberChar::Eight => 8,
+            NumberChar::Nine => 9,
+            NumberChar::Zero => 0,
+        }
+    }
 }
 
 #[cfg(test)]
